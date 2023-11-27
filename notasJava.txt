@@ -1,0 +1,48 @@
+const admin = require('firebase-admin');
+const serviceAccount = require('../../serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://biketec-d84db-default-rtdb.firebaseio.com/',
+});
+
+const db = admin.database();
+
+// Function to add a new bike
+const addBike = (gps_id, is_available, latitude, longitud) => {
+  const newBike = {
+    gps_id,
+    is_available: is_available === 'true',
+    latitude,
+    longitud,
+  };
+
+  db.ref('bikes').push(newBike, (error) => {
+    if (error) {
+      console.error('Error adding bike:', error.message);
+    } else {
+      console.log('Bike added successfully');
+    }
+  });
+};
+
+// Function to update an existing bike
+const updateBike = (bikeId, gps_id, is_available, latitude, longitud) => {
+  const updatedBikeData = {
+    gps_id,
+    is_available: is_available === 'true',
+    latitude,
+    longitud,
+  };
+
+  db.ref(`bikes/${bikeId}`).update(updatedBikeData, (error) => {
+    if (error) {
+      console.error('Error updating bike:', error.message);
+    } else {
+      console.log('Bike updated successfully');
+    }
+  });
+};
+
+// Example usage:
+// addBike('123', 'true', '40.7128
